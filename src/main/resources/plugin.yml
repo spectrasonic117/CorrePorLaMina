@@ -1,0 +1,5 @@
+name: CorrePorLaMina
+version: '${version}'
+main: com.spectrasonic.CorrePorLaMina.Main
+api-version: '1.21'
+authors: [Spectrasonic]
