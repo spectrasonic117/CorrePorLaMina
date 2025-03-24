@@ -1,9 +1,14 @@
 package com.spectrasonic.CorrePorLaMina;
 
+import co.aikar.commands.PaperCommandManager;
+import com.spectrasonic.CorrePorLaMina.Commands.MinasCommand;
+import com.spectrasonic.CorrePorLaMina.Game.GameListener;
 import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
+
+    private PaperCommandManager commandManager;
 
     @Override
     public void onEnable() {
@@ -20,10 +25,15 @@ public final class Main extends JavaPlugin {
     }
 
     public void registerCommands() {
-        // Set Commands Here
+        commandManager = new PaperCommandManager(this);
+        commandManager.registerCommand(new MinasCommand());
     }
 
     public void registerEvents() {
-        // Set Events Here
+        getServer().getPluginManager().registerEvents(new GameListener(), this);
+    }
+
+    public static Main getInstance() {
+        return JavaPlugin.getPlugin(Main.class);
     }
 }

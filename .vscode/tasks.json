@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type": "gradle",
+            "id": "/Users/spectra/Desktop/CorrePorLaMinabuildCorrePorLaMina",
+            "script": "build",
+            "description": "Assembles and tests this project.",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "project": "CorrePorLaMina",
+            "buildFile": "/Users/spectra/Desktop/CorrePorLaMina/build.gradle",
+            "rootProject": "CorrePorLaMina",
+            "projectFolder": "/Users/spectra/Desktop/CorrePorLaMina",
+            "workspaceFolder": "/Users/spectra/Desktop/CorrePorLaMina",
+            "args": "",
+            "javaDebug": false,
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "label": "gradle: build"
+        }
+    ]
+}
