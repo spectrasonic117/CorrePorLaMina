@@ -60,6 +60,11 @@ public class GameListener implements Listener {
             return;
         }
 
+        // Verificar si el jugador tiene permiso de bypass
+        if (player.hasPermission("game.bypass")) {
+            return;
+        }
+
         // Verificar si este minecart pertenece a un jugador en el juego
         if (gameManager.getPlayerMinecart().containsValue(event.getVehicle())) {
             // Cancelar el evento para evitar que el jugador se baje

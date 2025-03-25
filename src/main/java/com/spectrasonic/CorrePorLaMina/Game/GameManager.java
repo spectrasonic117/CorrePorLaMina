@@ -108,6 +108,11 @@ public class GameManager {
         gameActive = true;
         // Para cada jugador online se asigna un minecart y se entregan los ítems
         for (Player player : Bukkit.getOnlinePlayers()) {
+
+            if (player.hasPermission("game.bypass")) {
+                continue;
+            }
+
             if (minecartLocations.isEmpty())
                 continue;
             Location spawn = minecartLocations.get(random.nextInt(minecartLocations.size()));
