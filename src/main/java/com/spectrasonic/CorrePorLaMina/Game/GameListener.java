@@ -44,6 +44,7 @@ public class GameListener implements Listener {
                 // Aumenta la velocidad del minecart del jugador.
                 gameManager.incrementCartSpeed(player);
                 pointsManager.addPoints(player, 1);
+
                 MessageUtils.sendActionBar(player, "<green>¡Has puntuado!</green>");
                 SoundUtils.playerSound(player, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
             }
