@@ -1,0 +1,29 @@
+name: CorrePorLaMina
+version: "${version}"
+main: com.spectrasonic.CorrePorLaMina.Main
+api-version: "1.21"
+authors: [Spectrasonic]
+
+commands:
+    minas:
+        description: Main command for CorrePorLaMina game
+        usage: /minas <subcommand>
+        permission: correporlamina.use
+        aliases: [mina]
+
+permissions:
+    correporlamina.use:
+        description: Allows access to the main minas command
+        default: true
+    correporlamina.game:
+        description: Allows starting and stopping the game
+        default: op
+    correporlamina.minecart:
+        description: Allows managing minecart locations
+        default: op
+    correporlamina.reload:
+        description: Allows reloading the plugin configuration
+        default: op
+    game.bypass:
+        description: Allows bypassing game restrictions
+        default: false

@@ -2,6 +2,7 @@ package com.spectrasonic.CorrePorLaMina.Game;
 
 import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
 import com.spectrasonic.CorrePorLaMina.Utils.SoundUtils;
+import com.spectrasonic.CorrePorLaMina.Utils.PointsManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
@@ -15,6 +16,11 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 public class GameListener implements Listener {
 
     private final GameManager gameManager = GameManager.getInstance();
+    private final PointsManager pointsManager;
+
+    public GameListener(PointsManager pointsManager) {
+        this.pointsManager = pointsManager;
+    }
 
     @EventHandler
     public void onArrowHit(ProjectileHitEvent event) {
@@ -37,6 +43,7 @@ public class GameListener implements Listener {
             if (assigned != null && hitType.equals(assigned)) {
                 // Aumenta la velocidad del minecart del jugador.
                 gameManager.incrementCartSpeed(player);
+                pointsManager.addPoints(player, 1);
                 MessageUtils.sendActionBar(player, "<green>¡Has puntuado!</green>");
                 SoundUtils.playerSound(player, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
             }

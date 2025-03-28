@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.spectrasonic"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     gradlePluginPortal()
@@ -21,6 +21,9 @@ repositories {
     maven {
         name = "aikar"
         url = "https://repo.aikar.co/content/groups/aikar/"
+    }
+    maven {
+        url ="https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
 }
 
@@ -43,13 +46,15 @@ dependencies {
 
     // Paperweight
     // paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+
+    compileOnly "me.clip:placeholderapi:2.11.6"
 }
 
 shadowJar {
     relocate "co.aikar.commands", "com.spectrasonic.CorrePorLaMina.acf"
     relocate "co.aikar.locales", "com.spectrasonic.CorrePorLaMina.locales"
     destinationDirectory = file("${rootDir}/out")
-    archiveFileName = "${rootProject.name}-${version}.jar" 
+    archiveFileName = "Spectra-${rootProject.name}-${version}.jar" 
 }
 
 build.dependsOn shadowJar
