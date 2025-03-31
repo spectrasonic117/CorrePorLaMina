@@ -35,8 +35,8 @@ public class GameManager {
             Material.RED_WOOL, Material.ORANGE_WOOL, Material.YELLOW_WOOL,
             Material.LIME_WOOL, Material.GREEN_WOOL, Material.CYAN_WOOL,
             Material.BLUE_WOOL, Material.PURPLE_WOOL, Material.MAGENTA_WOOL,
-            Material.BLACK_WOOL, Material.BROWN_WOOL);
-
+            Material.WHITE_WOOL, Material.BROWN_WOOL, Material.PINK_WOOL,
+            Material.GRAY_WOOL, Material.LIGHT_BLUE_WOOL);
     private File minecartsFile;
     private FileConfiguration minecartsConfig;
 
@@ -183,14 +183,15 @@ public class GameManager {
             // Si la velocidad es muy baja, establecer una dirección base
             if (currentVelocity.lengthSquared() < 0.01) {
                 // Usar la dirección en la que está mirando el jugador como base
-                currentVelocity = player.getLocation().getDirection().setY(0).normalize().multiply(0.2);
+                currentVelocity = player.getLocation().getDirection().setY(0).normalize().multiply(0.18);
             } else {
                 // Normalizar la velocidad actual y aumentarla
                 currentVelocity = currentVelocity.normalize().multiply(
-                        currentVelocity.length() + 0.3);
+                        currentVelocity.length() + 0.1);
             }
 
             cart.setVelocity(currentVelocity);
         }
     }
+
 }
