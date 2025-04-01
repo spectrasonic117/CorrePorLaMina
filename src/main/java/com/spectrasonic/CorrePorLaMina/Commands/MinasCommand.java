@@ -24,6 +24,7 @@ public class MinasCommand extends BaseCommand {
     @CommandPermission("correporlamina.game")
     @CommandCompletion("start|stop")
     public void onGame(CommandSender sender, @Optional String action) {
+        Player player = (Player) sender;
         if (action == null) {
             MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start|stop></red>");
             return;
@@ -32,6 +33,7 @@ public class MinasCommand extends BaseCommand {
             if (gameManager.isGameActive()) {
                 MessageUtils.sendMessage(sender, "<red>El juego ya está en marcha.</red>");
             } else {
+                player.performCommand("id false");
                 gameManager.startGame();
                 MessageUtils.sendMessage(sender, "<green>El juego ha iniciado.</green>");
             }
@@ -39,6 +41,7 @@ public class MinasCommand extends BaseCommand {
             if (!gameManager.isGameActive()) {
                 MessageUtils.sendMessage(sender, "<red>No hay juego en marcha.</red>");
             } else {
+                player.performCommand("id true");
                 gameManager.stopGame();
                 MessageUtils.sendMessage(sender, "<green>El juego ha terminado.</green>");
             }

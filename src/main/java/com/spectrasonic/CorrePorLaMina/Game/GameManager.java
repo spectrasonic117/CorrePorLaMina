@@ -32,11 +32,14 @@ public class GameManager {
     private final Random random = new Random();
 
     private final List<Material> availableWools = Arrays.asList(
-            Material.RED_WOOL, Material.ORANGE_WOOL, Material.YELLOW_WOOL,
-            Material.LIME_WOOL, Material.GREEN_WOOL, Material.CYAN_WOOL,
-            Material.BLUE_WOOL, Material.PURPLE_WOOL, Material.MAGENTA_WOOL,
-            Material.WHITE_WOOL, Material.BROWN_WOOL, Material.PINK_WOOL,
-            Material.GRAY_WOOL, Material.LIGHT_BLUE_WOOL);
+            Material.RED_WOOL,
+            Material.ORANGE_WOOL,
+            Material.YELLOW_WOOL,
+            Material.LIME_WOOL,
+            Material.PURPLE_WOOL,
+            Material.LIGHT_BLUE_WOOL,
+            Material.WHITE_WOOL,
+            Material.MAGENTA_WOOL);
     private File minecartsFile;
     private FileConfiguration minecartsConfig;
 
