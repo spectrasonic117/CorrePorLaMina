@@ -45,8 +45,7 @@ public class GameListener implements Listener {
         if (hitBlock == null)
             return;
         Material hitType = hitBlock.getType();
-        // Se verifica que el bloque impactado sea de lana y que no sea WHITE_WOOL ni
-        // LIGHT_GRAY_WOOL.
+
         if (hitType.toString().endsWith("_WOOL") &&
                 !hitType.equals(Material.BLACK_WOOL) &&
                 !hitType.equals(Material.LIGHT_GRAY_WOOL) &&
@@ -59,7 +58,9 @@ public class GameListener implements Listener {
             Material assigned = gameManager.getPlayerWoolAssignment().get(player.getUniqueId());
             if (assigned != null && hitType.equals(assigned)) {
                 // incrementar velocidad del minecart
+
                 gameManager.incrementCartSpeed(player);
+
                 pointsManager.addPoints(player, 1);
                 MessageUtils.sendActionBar(player, "<green><b>+1 Punto");
                 SoundUtils.playerSound(player, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);

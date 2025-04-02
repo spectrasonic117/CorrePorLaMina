@@ -186,11 +186,11 @@ public class GameManager {
             // Si la velocidad es muy baja, establecer una dirección base
             if (currentVelocity.lengthSquared() < 0.01) {
                 // Usar la dirección en la que está mirando el jugador como base
-                currentVelocity = player.getLocation().getDirection().setY(0).normalize().multiply(0.18);
+                currentVelocity = player.getLocation().getDirection().setY(0).normalize().multiply(0.2);
             } else {
                 // Normalizar la velocidad actual y aumentarla
                 currentVelocity = currentVelocity.normalize().multiply(
-                        currentVelocity.length() + 0.1);
+                        currentVelocity.length() + 0.3);
             }
 
             cart.setVelocity(currentVelocity);
