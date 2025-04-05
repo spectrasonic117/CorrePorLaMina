@@ -152,6 +152,7 @@ public class GameManager {
             if (player.getGameMode() != targetGameMode) {
                 // Cambiar jugadores en SPECTATOR a ADVENTURE
                 if (player.getGameMode() == GameMode.SPECTATOR) {
+                    player.getInventory().clear();
                     player.setGameMode(GameMode.ADVENTURE);
                 }
                 continue;

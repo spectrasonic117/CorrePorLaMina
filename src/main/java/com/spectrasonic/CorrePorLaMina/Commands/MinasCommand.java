@@ -37,7 +37,7 @@ public class MinasCommand extends BaseCommand {
                 player.performCommand("id false");
                 // Modificar para que solo afecte a jugadores en modo ADVENTURE
                 gameManager.startGame(GameMode.ADVENTURE);
-                MessageUtils.sendMessage(sender, "<green>El juego ha iniciado (solo para jugadores en modo ADVENTURE).</green>");
+                MessageUtils.sendMessage(sender, "<green>Juego Iniciado.");
             }
         } else if (action.equalsIgnoreCase("stop")) {
             if (!gameManager.isGameActive()) {
@@ -46,7 +46,7 @@ public class MinasCommand extends BaseCommand {
                 player.performCommand("id true");
                 // Modificar para que solo afecte a jugadores en modo ADVENTURE
                 gameManager.stopGame(GameMode.ADVENTURE);
-                MessageUtils.sendMessage(sender, "<green>El juego ha terminado (solo para jugadores en modo ADVENTURE).</green>");
+                MessageUtils.sendMessage(sender, "<red>Juego Terminado.");
             }
         } else {
             MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start|stop></red>");
