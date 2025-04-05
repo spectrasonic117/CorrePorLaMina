@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.spectrasonic.CorrePorLaMina.Commands.MinasCommand;
 import com.spectrasonic.CorrePorLaMina.Utils.PointsManager;
 import com.spectrasonic.CorrePorLaMina.Game.GameListener;
+import com.spectrasonic.CorrePorLaMina.Game.PlayerMovementLock;
 import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +35,8 @@ public final class Main extends JavaPlugin {
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new GameListener(pointsManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerMovementLock(), this);
+
     }
 
     public static Main getInstance() {
