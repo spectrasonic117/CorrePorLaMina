@@ -54,7 +54,7 @@ public class GameListener implements Listener {
                 !hitType.equals(Material.GRAY_WOOL) &&
                 !hitType.equals(Material.GREEN_WOOL) &&
                 !hitType.equals(Material.BROWN_WOOL) &&
-                !hitType.equals(Material.LIGHT_BLUE_WOOL)) {
+                !hitType.equals(Material.CYAN_WOOL)) {
             Material assigned = gameManager.getPlayerWoolAssignment().get(player.getUniqueId());
             if (assigned != null && hitType.equals(assigned)) {
                 // incrementar velocidad del minecart

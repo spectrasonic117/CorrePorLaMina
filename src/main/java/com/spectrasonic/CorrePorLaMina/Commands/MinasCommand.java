@@ -9,11 +9,13 @@ import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.GameMode;
 import com.spectrasonic.CorrePorLaMina.Game.GameManager;
 import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
 import lombok.NoArgsConstructor;
 
 @CommandAlias("minas")
+@CommandPermission("correporlamina.admin")
 @NoArgsConstructor
 public class MinasCommand extends BaseCommand {
 
@@ -21,7 +23,6 @@ public class MinasCommand extends BaseCommand {
 
     @Subcommand("game")
     @Syntax("<start|stop>")
-    @CommandPermission("correporlamina.game")
     @CommandCompletion("start|stop")
     public void onGame(CommandSender sender, @Optional String action) {
         Player player = (Player) sender;
@@ -34,16 +35,18 @@ public class MinasCommand extends BaseCommand {
                 MessageUtils.sendMessage(sender, "<red>El juego ya está en marcha.</red>");
             } else {
                 player.performCommand("id false");
-                gameManager.startGame();
-                MessageUtils.sendMessage(sender, "<green>El juego ha iniciado.</green>");
+                // Modificar para que solo afecte a jugadores en modo ADVENTURE
+                gameManager.startGame(GameMode.ADVENTURE);
+                MessageUtils.sendMessage(sender, "<green>El juego ha iniciado (solo para jugadores en modo ADVENTURE).</green>");
             }
         } else if (action.equalsIgnoreCase("stop")) {
             if (!gameManager.isGameActive()) {
                 MessageUtils.sendMessage(sender, "<red>No hay juego en marcha.</red>");
             } else {
                 player.performCommand("id true");
-                gameManager.stopGame();
-                MessageUtils.sendMessage(sender, "<green>El juego ha terminado.</green>");
+                // Modificar para que solo afecte a jugadores en modo ADVENTURE
+                gameManager.stopGame(GameMode.ADVENTURE);
+                MessageUtils.sendMessage(sender, "<green>El juego ha terminado (solo para jugadores en modo ADVENTURE).</green>");
             }
         } else {
             MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start|stop></red>");
@@ -52,7 +55,6 @@ public class MinasCommand extends BaseCommand {
 
     @Subcommand("minecart")
     @Syntax("<add|remove>")
-    @CommandPermission("correporlamina.minecart")
     @CommandCompletion("add|remove")
     public void onMinecart(Player player, @Optional String arg) {
         // Si no se proporciona argumento o es inválido, mostrar mensaje de uso
@@ -75,7 +77,6 @@ public class MinasCommand extends BaseCommand {
     }
 
     @Subcommand("reload")
-    @CommandPermission("correporlamina.reload")
     public void onReload(CommandSender sender) {
         gameManager.reload();
         MessageUtils.sendMessage(sender, "<green>La configuración ha sido recargada.</green>");

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import com.spectrasonic.CorrePorLaMina.Main;
 import com.spectrasonic.CorrePorLaMina.Utils.ItemBuilder;
+import org.bukkit.GameMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,12 +108,12 @@ public class GameManager {
         return gameActive;
     }
 
-    public void startGame() {
+    public void startGame(GameMode targetGameMode) {
         gameActive = true;
         // Para cada jugador online se asigna un minecart y se entregan los ítems
         for (Player player : Bukkit.getOnlinePlayers()) {
-
-            if (player.hasPermission("game.bypass")) {
+            // Solo afectar a jugadores en modo ADVENTURE
+            if (player.getGameMode() != targetGameMode) {
                 continue;
             }
 
@@ -138,38 +139,26 @@ public class GameManager {
         // llegue al final
     }
 
-    public void stopGame() {
+    public void stopGame(GameMode targetGameMode) {
         gameActive = false;
         // Se remueven todos los minecarts creados y se limpian las asignaciones
         for (Minecart cart : playerMinecart.values()) {
             cart.remove();
         }
 
-        // Limpiar inventarios de los jugadores
+        // Limpiar inventarios de los jugadores completamente
         for (Player player : Bukkit.getOnlinePlayers()) {
-            UUID playerId = player.getUniqueId();
-            // Eliminar el arco, la flecha y la lana asignada
-            Material assignedWool = playerWoolAssignment.get(playerId);
-
-            // Eliminar items específicos del inventario
-            ItemStack[] contents = player.getInventory().getContents();
-            for (int i = 0; i < contents.length; i++) {
-                ItemStack item = contents[i];
-                if (item != null) {
-                    // Eliminar arcos
-                    if (item.getType() == Material.BOW) {
-                        player.getInventory().setItem(i, null);
-                    }
-                    // Eliminar flechas
-                    else if (item.getType() == Material.ARROW) {
-                        player.getInventory().setItem(i, null);
-                    }
-                    // Eliminar la lana asignada
-                    else if (assignedWool != null && item.getType() == assignedWool) {
-                        player.getInventory().setItem(i, null);
-                    }
+            // Solo afectar a jugadores en modo ADVENTURE
+            if (player.getGameMode() != targetGameMode) {
+                // Cambiar jugadores en SPECTATOR a ADVENTURE
+                if (player.getGameMode() == GameMode.SPECTATOR) {
+                    player.setGameMode(GameMode.ADVENTURE);
                 }
+                continue;
             }
+
+            // Limpiar completamente el inventario
+            player.getInventory().clear();
         }
 
         playerMinecart.clear();
