@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import com.spectrasonic.CorrePorLaMina.Main;
 import com.spectrasonic.CorrePorLaMina.Utils.ItemBuilder;
+import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
 import org.bukkit.GameMode;
 
 import java.io.File;
@@ -26,9 +27,7 @@ public class GameManager {
     private final Main plugin = Main.getPlugin(Main.class);
     private boolean gameActive = false;
     private List<Location> minecartLocations = new ArrayList<>();
-    // Almacena la asignación de lana para cada jugador
     private final Map<UUID, Material> playerWoolAssignment = new HashMap<>();
-    // Almacena el minecart en el que está cada jugador
     private final Map<UUID, Minecart> playerMinecart = new HashMap<>();
     private final Random random = new Random();
 
@@ -40,7 +39,9 @@ public class GameManager {
             Material.PURPLE_WOOL,
             Material.LIGHT_BLUE_WOOL,
             Material.WHITE_WOOL,
-            Material.MAGENTA_WOOL);
+            Material.MAGENTA_WOOL
+    );
+
     private File minecartsFile;
     private FileConfiguration minecartsConfig;
 
@@ -109,35 +110,37 @@ public class GameManager {
     }
 
     public void startGame(GameMode targetGameMode) {
-        gameActive = true;
-        // Para cada jugador online se asigna un minecart y se entregan los ítems
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            // Solo afectar a jugadores en modo ADVENTURE
-            if (player.getGameMode() != targetGameMode) {
-                continue;
-            }
-
-            if (minecartLocations.isEmpty())
-                continue;
-            Location spawn = minecartLocations.get(random.nextInt(minecartLocations.size()));
-            Minecart cart = player.getWorld().spawn(spawn, Minecart.class);
-            cart.addPassenger(player);
-            playerMinecart.put(player.getUniqueId(), cart);
-            // Dar arco irrompible con Infinity 1 y una flecha
-            ItemStack bow = ItemBuilder.setMaterial("BOW")
-                    .addEnchantment("infinity", 1)
-                    .build();
-            bow.getItemMeta().setUnbreakable(true);
-            player.getInventory().addItem(bow);
-            player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-            // Asignar lana aleatoria (sin WHITE_WOOL ni LIGHT_GRAY_WOOL)
-            Material assignedWool = availableWools.get(random.nextInt(availableWools.size()));
-            playerWoolAssignment.put(player.getUniqueId(), assignedWool);
-            player.getInventory().addItem(new ItemStack(assignedWool));
+    gameActive = true;
+    for (Player player : Bukkit.getOnlinePlayers()) {
+        if (player.getGameMode() != targetGameMode) {
+            continue;
         }
-        // Aquí se podría iniciar la lógica de ticks para verificar que un minecart
-        // llegue al final
+
+        if (minecartLocations.isEmpty()) continue;
+
+        Location spawn = minecartLocations.get(random.nextInt(minecartLocations.size()));
+        Minecart cart = player.getWorld().spawn(spawn, Minecart.class);
+        cart.addPassenger(player);
+        playerMinecart.put(player.getUniqueId(), cart);
+
+        ItemStack bow = ItemBuilder.setMaterial("BOW")
+                .addEnchantment("infinity", 1)
+                .build();
+        bow.getItemMeta().setUnbreakable(true);
+        player.getInventory().addItem(bow);
+        player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+
+        Material assignedWool = availableWools.get(random.nextInt(availableWools.size()));
+        playerWoolAssignment.put(player.getUniqueId(), assignedWool);
+        player.getInventory().addItem(new ItemStack(assignedWool));
+
+        // Mensaje de depuración
+        Bukkit.getLogger().info("Asignando lana " + assignedWool + " a " + player.getName());
+
+        // Mostrar el título al jugador después de asignarle la lana
+        showWoolTitleForPlayer(player, assignedWool);
     }
+}
 
     public void stopGame(GameMode targetGameMode) {
         gameActive = false;
@@ -185,6 +188,40 @@ public class GameManager {
 
             cart.setVelocity(currentVelocity);
         }
+    }
+
+    public void showWoolTitleForPlayer(Player player, Material wool) {
+        String title;
+        switch (wool) {
+            case RED_WOOL:
+                title = "<red>Lana Roja";
+                break;
+            case ORANGE_WOOL:
+                title = "<#ff7300>Lana Naranja";
+                break;
+            case YELLOW_WOOL:
+                title = "<yellow>Lana Amarilla";
+                break;
+            case LIME_WOOL:
+                title = "<green>Lana Verde";
+                break;
+            case PURPLE_WOOL:
+                title = "<dark_purple>Lana Purpura";
+                break;
+            case LIGHT_BLUE_WOOL:
+                title = "<aqua>Lana Azul Claro";
+                break;
+            case WHITE_WOOL:
+                title = "<white>Lana Blanca";
+                break;
+            case MAGENTA_WOOL:
+                title = "<light_purple>Lana Magenta";
+                break;
+            default:
+                return;
+        }
+
+        MessageUtils.sendTitle(player, title, "", 1, 2, 1);
     }
 
 }
