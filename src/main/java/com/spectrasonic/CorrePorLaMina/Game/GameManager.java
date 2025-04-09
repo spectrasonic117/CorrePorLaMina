@@ -111,14 +111,21 @@ public class GameManager {
 
     public void startGame(GameMode targetGameMode) {
     gameActive = true;
+
+        // Clonar la lista para evitar modificar la original
+        List<Location> availableLocations = new ArrayList<>(minecartLocations);
+
     for (Player player : Bukkit.getOnlinePlayers()) {
-        if (player.getGameMode() != targetGameMode) {
+            if (player.getGameMode() != targetGameMode) continue;
+            if (availableLocations.isEmpty()) {
+                // Opcional: Notificar o manejar jugadores sin punto disponible
+                // MessageUtils.sendMessage(player, "<red>No hay suficientes ubicaciones de minecart disponibles.</red>");
             continue;
         }
 
-        if (minecartLocations.isEmpty()) continue;
-
-        Location spawn = minecartLocations.get(random.nextInt(minecartLocations.size()));
+            // Elegir un punto aleatorio sin repetir
+            int index = random.nextInt(availableLocations.size());
+            Location spawn = availableLocations.remove(index);  // Lo quitamos para que no se repita
         Minecart cart = player.getWorld().spawn(spawn, Minecart.class);
         cart.addPassenger(player);
         playerMinecart.put(player.getUniqueId(), cart);
