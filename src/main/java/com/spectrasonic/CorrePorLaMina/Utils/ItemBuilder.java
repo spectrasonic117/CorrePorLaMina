@@ -64,6 +64,11 @@ public class ItemBuilder {
         }
     }
 
+    public ItemBuilder setUnbreakable(boolean unbreakable) {
+        meta.setUnbreakable(unbreakable);
+        return this;
+    }
+
     public ItemStack build() {
         meta.addItemFlags(flags.toArray(new ItemFlag[0]));
         item.setItemMeta(meta);

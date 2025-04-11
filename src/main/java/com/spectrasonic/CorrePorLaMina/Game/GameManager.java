@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Minecart;
@@ -13,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import com.spectrasonic.CorrePorLaMina.Main;
 import com.spectrasonic.CorrePorLaMina.Utils.ItemBuilder;
 import com.spectrasonic.CorrePorLaMina.Utils.MessageUtils;
+import com.spectrasonic.CorrePorLaMina.Utils.WoolIconUtils;
 import org.bukkit.GameMode;
 
 import java.io.File;
@@ -29,6 +33,7 @@ public class GameManager {
     private List<Location> minecartLocations = new ArrayList<>();
     private final Map<UUID, Material> playerWoolAssignment = new HashMap<>();
     private final Map<UUID, Minecart> playerMinecart = new HashMap<>();
+    private final Map<UUID, BossBar> playerBossBar = new HashMap<>();
     private final Random random = new Random();
 
     private final List<Material> availableWools = Arrays.asList(
@@ -110,30 +115,28 @@ public class GameManager {
     }
 
     public void startGame(GameMode targetGameMode) {
-    gameActive = true;
-
-        // Clonar la lista para evitar modificar la original
+        gameActive = true;
         List<Location> availableLocations = new ArrayList<>(minecartLocations);
 
     for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getGameMode() != targetGameMode) continue;
             if (availableLocations.isEmpty()) {
-                // Opcional: Notificar o manejar jugadores sin punto disponible
-                // MessageUtils.sendMessage(player, "<red>No hay suficientes ubicaciones de minecart disponibles.</red>");
             continue;
         }
 
-            // Elegir un punto aleatorio sin repetir
-            int index = random.nextInt(availableLocations.size());
-            Location spawn = availableLocations.remove(index);  // Lo quitamos para que no se repita
+        int index = random.nextInt(availableLocations.size());
+        Location spawn = availableLocations.remove(index);
         Minecart cart = player.getWorld().spawn(spawn, Minecart.class);
         cart.addPassenger(player);
         playerMinecart.put(player.getUniqueId(), cart);
 
         ItemStack bow = ItemBuilder.setMaterial("BOW")
                 .addEnchantment("infinity", 1)
+                .setUnbreakable(true)
+                .setFlag("HIDE_ENCHANTS")
+                .setFlag("HIDE_ATTRIBUTES")
                 .build();
-        bow.getItemMeta().setUnbreakable(true);
+                
         player.getInventory().addItem(bow);
         player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
 
@@ -141,58 +144,44 @@ public class GameManager {
         playerWoolAssignment.put(player.getUniqueId(), assignedWool);
         player.getInventory().addItem(new ItemStack(assignedWool));
 
-        // Mensaje de depuración
         Bukkit.getLogger().info("Asignando lana " + assignedWool + " a " + player.getName());
-
-        // Mostrar el título al jugador después de asignarle la lana
         showWoolTitleForPlayer(player, assignedWool);
+
+            showWoolBossBarForPlayer(player, assignedWool);
     }
 }
 
     public void stopGame(GameMode targetGameMode) {
         gameActive = false;
-        // Se remueven todos los minecarts creados y se limpian las asignaciones
-        for (Minecart cart : playerMinecart.values()) {
-            cart.remove();
-        }
-
-        // Limpiar inventarios de los jugadores completamente
+        for (Minecart cart : playerMinecart.values()) cart.remove();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            // Solo afectar a jugadores en modo ADVENTURE
             if (player.getGameMode() != targetGameMode) {
-                // Cambiar jugadores en SPECTATOR a ADVENTURE
                 if (player.getGameMode() == GameMode.SPECTATOR) {
                     player.getInventory().clear();
                     player.setGameMode(GameMode.ADVENTURE);
                 }
+                removeWoolBossBar(player);
                 continue;
             }
-
-            // Limpiar completamente el inventario
             player.getInventory().clear();
+            removeWoolBossBar(player);
         }
 
         playerMinecart.clear();
         playerWoolAssignment.clear();
+        playerBossBar.clear();
     }
 
     public void incrementCartSpeed(Player player) {
         Minecart cart = playerMinecart.get(player.getUniqueId());
         if (cart != null) {
-            // Obtener la velocidad actual y aumentarla en la misma dirección
-            // en lugar de usar la dirección de la ubicación
             org.bukkit.util.Vector currentVelocity = cart.getVelocity();
-
-            // Si la velocidad es muy baja, establecer una dirección base
             if (currentVelocity.lengthSquared() < 0.01) {
-                // Usar la dirección en la que está mirando el jugador como base
                 currentVelocity = player.getLocation().getDirection().setY(0).normalize().multiply(0.2);
             } else {
-                // Normalizar la velocidad actual y aumentarla
-                currentVelocity = currentVelocity.normalize().multiply(
-                        currentVelocity.length() + 0.3);
+                currentVelocity = currentVelocity.normalize()
+                        .multiply(currentVelocity.length() + 0.3);
             }
-
             cart.setVelocity(currentVelocity);
         }
     }
@@ -200,35 +189,57 @@ public class GameManager {
     public void showWoolTitleForPlayer(Player player, Material wool) {
         String title;
         switch (wool) {
-            case RED_WOOL:
-                title = "<red>Lana Roja";
-                break;
-            case ORANGE_WOOL:
-                title = "<#ff7300>Lana Naranja";
-                break;
-            case YELLOW_WOOL:
-                title = "<yellow>Lana Amarilla";
-                break;
-            case LIME_WOOL:
-                title = "<green>Lana Verde";
-                break;
-            case PURPLE_WOOL:
-                title = "<dark_purple>Lana Purpura";
-                break;
-            case LIGHT_BLUE_WOOL:
-                title = "<aqua>Lana Azul Claro";
-                break;
-            case WHITE_WOOL:
-                title = "<white>Lana Blanca";
-                break;
-            case MAGENTA_WOOL:
-                title = "<light_purple>Lana Magenta";
-                break;
-            default:
-                return;
+            case RED_WOOL:        title = "<red>Lana Roja"; break;
+            case ORANGE_WOOL:     title = "<#ff7300>Lana Naranja"; break;
+            case YELLOW_WOOL:     title = "<yellow>Lana Amarilla"; break;
+            case LIME_WOOL:       title = "<green>Lana Verde"; break;
+            case PURPLE_WOOL:     title = "<dark_purple>Lana Purpura"; break;
+            case LIGHT_BLUE_WOOL: title = "<aqua>Lana Azul Claro"; break;
+            case WHITE_WOOL:      title = "<white>Lana Blanca"; break;
+            case MAGENTA_WOOL:    title = "<light_purple>Lana Magenta"; break;
+            default: return;
         }
-
         MessageUtils.sendTitle(player, title, "", 1, 2, 1);
     }
 
+    public void showWoolBossBarForPlayer(Player player, Material wool) {
+        String icon = WoolIconUtils.getIcon(wool);
+        if (icon.isEmpty()) return;
+
+        BossBar bossBar = playerBossBar.get(player.getUniqueId());
+        if (bossBar == null) {
+            bossBar = Bukkit.createBossBar(icon, BarColor.WHITE, BarStyle.SOLID);
+            bossBar.addPlayer(player);
+            playerBossBar.put(player.getUniqueId(), bossBar);
+        } else {
+            bossBar.setTitle(icon);
+}
+
+        bossBar.setColor(getBarColorFromWool(wool));
+        bossBar.setProgress(1.0);
+        bossBar.setVisible(true);
+    }
+
+    public void removeWoolBossBar(Player player) {
+        BossBar bossBar = playerBossBar.remove(player.getUniqueId());
+        if (bossBar != null) {
+            bossBar.removeAll();
+        }
+    }
+
+    public void onPlayerFinish(Player player) {
+        removeWoolBossBar(player);
+    }
+
+    private BarColor getBarColorFromWool(Material wool) {
+        return switch (wool) {
+            case RED_WOOL -> BarColor.WHITE;
+            case ORANGE_WOOL, YELLOW_WOOL -> BarColor.WHITE;
+            case LIME_WOOL -> BarColor.WHITE;
+            case PURPLE_WOOL, MAGENTA_WOOL -> BarColor.WHITE;
+            case LIGHT_BLUE_WOOL -> BarColor.WHITE;
+            case WHITE_WOOL -> BarColor.WHITE;
+            default -> BarColor.WHITE;
+        };
+    }
 }
