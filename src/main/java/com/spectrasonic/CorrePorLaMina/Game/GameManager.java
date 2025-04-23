@@ -131,10 +131,13 @@ public class GameManager {
         playerMinecart.put(player.getUniqueId(), cart);
 
         ItemStack bow = ItemBuilder.setMaterial("BOW")
+                .setName("<white><bold>Zapper")
                 .addEnchantment("infinity", 1)
                 .setUnbreakable(true)
                 .setFlag("HIDE_ENCHANTS")
+                .setCustomModelData(1000)
                 .setFlag("HIDE_ATTRIBUTES")
+
                 .build();
                 
         player.getInventory().addItem(bow);
