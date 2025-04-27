@@ -61,8 +61,11 @@ public class GameListener implements Listener {
 
                 gameManager.incrementCartSpeed(player);
 
-                pointsManager.addPoints(player, 1);
-                MessageUtils.sendActionBar(player, "<green><b>+1 Punto");
+                // Get the current round and assign points accordingly
+                int currentRound = gameManager.getCurrentRound();
+                int pointsToAdd = currentRound; // Points = Round Number
+                pointsManager.addPoints(player, pointsToAdd);
+                MessageUtils.sendActionBar(player, "<green><b>+" + pointsToAdd + " Punto" + (pointsToAdd > 1 ? "s" : "") + "</b></green>"); // Update action bar message
                 SoundUtils.playerSound(player, org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
             }
         }

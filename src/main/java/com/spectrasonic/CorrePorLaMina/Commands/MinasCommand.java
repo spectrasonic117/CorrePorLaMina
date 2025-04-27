@@ -22,34 +22,36 @@ public class MinasCommand extends BaseCommand {
     private final GameManager gameManager = GameManager.getInstance();
 
     @Subcommand("game")
-    @Syntax("<start|stop>")
-    @CommandCompletion("start|stop")
-    public void onGame(CommandSender sender, @Optional String action) {
+    @Syntax("<start [round]|stop>")
+    @CommandCompletion("start:1|2|3|stop")
+    public void onGame(CommandSender sender, @Optional String action, @Optional Integer round) {
         Player player = (Player) sender;
         if (action == null) {
-            MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start|stop></red>");
+            MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start [round]|stop></red>");
             return;
         }
         if (action.equalsIgnoreCase("start")) {
             if (gameManager.isGameActive()) {
                 MessageUtils.sendMessage(sender, "<red>El juego ya está en marcha.</red>");
             } else {
+                int selectedRound = (round == null || round < 1 || round > 3) ? 1 : round;
+                if (round != null && (round < 1 || round > 3)) {
+                    MessageUtils.sendMessage(sender, "<yellow>Ronda inválida. Iniciando ronda 1 por defecto.</yellow>");
+                }
                 player.performCommand("id false");
-                // Modificar para que solo afecte a jugadores en modo ADVENTURE
-                gameManager.startGame(GameMode.ADVENTURE);
-                MessageUtils.sendMessage(sender, "<green>Juego Iniciado.");
+                gameManager.startGame(GameMode.ADVENTURE, selectedRound);
+                MessageUtils.sendMessage(sender, "<green>Juego Iniciado (Ronda " + selectedRound + ").");
             }
         } else if (action.equalsIgnoreCase("stop")) {
             if (!gameManager.isGameActive()) {
                 MessageUtils.sendMessage(sender, "<red>No hay juego en marcha.</red>");
             } else {
                 player.performCommand("id true");
-                // Modificar para que solo afecte a jugadores en modo ADVENTURE
                 gameManager.stopGame(GameMode.ADVENTURE);
                 MessageUtils.sendMessage(sender, "<red>Juego Terminado.");
             }
         } else {
-            MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start|stop></red>");
+            MessageUtils.sendMessage(sender, "<red>Uso: /minas game <start [round]|stop></red>");
         }
     }
 

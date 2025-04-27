@@ -35,6 +35,7 @@ public class GameManager {
     private final Map<UUID, Minecart> playerMinecart = new HashMap<>();
     private final Map<UUID, BossBar> playerBossBar = new HashMap<>();
     private final Random random = new Random();
+    private int currentRound = 1;
 
     private final List<Material> availableWools = Arrays.asList(
             Material.RED_WOOL,
@@ -114,8 +115,9 @@ public class GameManager {
         return gameActive;
     }
 
-    public void startGame(GameMode targetGameMode) {
+    public void startGame(GameMode targetGameMode, int round) {
         gameActive = true;
+        this.currentRound = round;
         List<Location> availableLocations = new ArrayList<>(minecartLocations);
 
     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -154,8 +156,13 @@ public class GameManager {
     }
 }
 
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
     public void stopGame(GameMode targetGameMode) {
         gameActive = false;
+        this.currentRound = 1;
         for (Minecart cart : playerMinecart.values()) cart.remove();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getGameMode() != targetGameMode) {
